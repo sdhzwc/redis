@@ -1,0 +1,30 @@
+name: Compile Redis
+
+on:
+  push:
+    branches:
+      - unstable
+  pull_request:
+    branches:
+      - unstable
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential tcl
+
+    - name: Build Redis
+      run: |
+        make distclean || true
+        make
+        make test
+
+    - name: Verify Redis build
+      run: src/redis-server --version
